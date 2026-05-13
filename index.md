@@ -1,12 +1,12 @@
-﻿---
+---
 layout: default
 title: 香蕉記帳 隱私權政策
 ---
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-05-05**
-**生效日期：2026-05-05**
+**最後更新日期：2026-05-13**
+**生效日期：2026-05-13**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
 
@@ -20,12 +20,12 @@ title: 香蕉記帳 隱私權政策
 我們**不會**將上述任何資料上傳至任何雲端伺服器，也**不會**傳送給開發者或任何第三方。
 
 ### 1.2 不蒐集個人識別資訊
-本 App **開發者本身不會**蒐集以下任何資訊（下列第 1.4 節說明的 Google AdMob 透過 SDK 自行蒐集者除外）：
+本 App **開發者本身不會**蒐集以下任何資訊（下列第 1.4 節說明的 Google AdMob、第 2.4 節說明的 Firebase 服務透過 SDK 自行蒐集者除外）：
 - 您的姓名、Email、電話、地址、身分證字號
 - 您的 Google 帳號、Facebook 帳號或其他登入資訊
 - 您的位置（GPS / 定位）
 - 您的通訊錄、照片、簡訊、通話紀錄
-- 您的裝置識別碼（IMEI、Android ID 等；廣告 ID / AAID 由 1.4 節 AdMob SDK 自行蒐集，本 App 開發者無法存取）
+- 您的裝置識別碼（IMEI、Android ID 等；廣告 ID / AAID 由 1.4 節 AdMob SDK 自行蒐集；Firebase Anonymous Auth UID 與 App Check Play Integrity 由 §2.4 說明，本 App 開發者皆無法存取原始資料）
 
 ### 1.3 不使用分析或追蹤工具（廣告除外）
 除下列第 1.4 節說明的廣告 SDK 外，本 App **不整合**任何第三方分析、追蹤 SDK，包含但不限於：
@@ -57,6 +57,12 @@ title: 香蕉記帳 隱私權政策
 
 您可透過「設定 → 清除快取」或「清除所有資料」清除本機日誌。
 
+### 1.6 機上條碼／QR 解析（v1.1.0 / v1.2.0）
+本 App 整合 Google **ML Kit Barcode Scanning** 與 **mobile_scanner** 兩個元件，**皆於您的裝置本機**對相機畫面或選取圖片進行條碼／QR 偵測：
+- **不會將相機畫面、QR payload 或條碼內容傳輸至任何伺服器**
+- 用途包含：拍照辨識前先偵測 OCR 用條碼以遮蔽（避免送雲端時洩漏條碼資訊）、台灣電子發票 QR 解析（v1.2.0 新增，免雲端 AI 配額即可帶入發票內容）
+- 從電子發票 QR 讀出的**賣方統一編號**（用於下次掃到同店家時自動帶入分類）會儲存於本機 SQLite `merchant_category_map` 表；統編為公開營業登記資訊，不屬個人資料
+
 ---
 
 ## 二、網路連線用途
@@ -87,6 +93,20 @@ title: 香蕉記帳 隱私權政策
 5. Google 對 Gemini API 的資料處理規範請參見 [Google AI Studio 服務條款](https://ai.google.dev/terms)
 6. 第一次使用時 APP 會顯示同意對話框；您**未同意前不會傳送任何圖片**
 7. 若您不希望使用此功能，所有記帳與股票資料都可以**手動輸入**完成，功能完全可選
+
+### 2.4 Firebase 服務（拍照辨識所需）
+為支援 §2.3 之拍照辨識功能，本 App 使用 Google **Firebase** 平台的下列服務，**皆由 Google 蒐集、儲存與處理**，本 App 開發者無法存取原始識別資料：
+
+| 子服務 | 蒐集內容 | 用途 | 儲存位置 |
+|--------|---------|------|---------|
+| **Firebase Anonymous Auth** | 匿名 UID（一串隨機字串，不含個資；首次啟動產生） | 識別請求來源以執行 §2.3 的每日呼叫次數限額；UID 不對應您的 Google 帳號或姓名 | Google 伺服器 |
+| **Firebase App Check（Play Integrity）** | 由 Google Play 服務簽發的裝置完整性 token、APP 套件名稱（`com.personal.expense_tracker`）、APP 簽章雜湊 | 防止本 App 的 Cloud Function 端點被機器人 / 假 APP 濫用，確保只有來自正式 APP 的請求得到回應 | Google 伺服器 |
+| **Firebase Cloud Functions** | §2.3 所述的圖片內容（即傳即丟、不儲存） | 將圖片轉送 Gemini API 並回傳 OCR 結果 | asia-east1 區域 |
+| **Firebase Firestore** | 匿名 UID + 當日呼叫次數計數 | 執行每日呼叫次數限額 | asia-east1 區域 |
+
+Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy) 與 [Firebase 隱私條款](https://firebase.google.com/support/privacy) 規範。若您未使用拍照辨識功能（包含 §2.3 拍照記帳與股票對帳單），上述網路請求**仍會以 Anonymous Auth + App Check 建立連線**以維持下次使用就緒；但**不會送出任何圖片**。
+
+如您完全不希望本 App 連線 Firebase，可在系統設定中限制本 App 的網路存取（功能將自動降級為手動輸入）。
 
 ---
 
