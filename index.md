@@ -5,8 +5,8 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-05-13**
-**生效日期：2026-05-13**
+**最後更新日期：2026-05-14**
+**生效日期：2026-05-14**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
 
@@ -114,12 +114,14 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 
 | 權限 | 用途 |
 |------|------|
-| 網路存取（INTERNET） | 查詢股票即時報價、載入 AdMob 廣告 |
+| 網路存取（INTERNET） | 查詢股票即時報價、載入 AdMob 廣告、Firebase Cloud Functions / Auth / App Check / Firestore（拍照辨識所需，詳見 §2.3／§2.4） |
 | 通知（POST_NOTIFICATIONS） | 顯示週期性記帳的提醒通知 |
 | 開機啟動（RECEIVE_BOOT_COMPLETED） | 重新註冊週期性提醒 |
 | 生物辨識（USE_BIOMETRIC） | App 鎖定（指紋／臉部解鎖） |
+| 觸覺回饋（VIBRATE） | 操作（如刪除、儲存）的輕量震動回饋 |
 | 廣告 ID（AD_ID） | 提供 Google AdMob 投放廣告與計算曝光 |
 | 讀寫儲存空間（READ/WRITE_EXTERNAL_STORAGE，僅限 Android 12 以下） | 匯出/匯入備份檔案 |
+| 讀取相片（READ_MEDIA_IMAGES，Android 13+） | 從相簿選取發票或股票對帳單圖片進行 OCR 辨識 |
 | 相機（CAMERA） | v1.1.0 拍照辨識功能（拍攝發票或股票對帳單進行 OCR 辨識；功能可選） |
 
 我們**不會**將上述權限用於任何上述以外的目的。
