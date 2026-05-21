@@ -5,8 +5,8 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-05-14**
-**生效日期：2026-05-14**
+**最後更新日期：2026-05-18**
+**生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
 
@@ -63,6 +63,48 @@ title: 香蕉記帳 隱私權政策
 - 用途包含：拍照辨識前先偵測 OCR 用條碼以遮蔽（避免送雲端時洩漏條碼資訊）、台灣電子發票 QR 解析（v1.2.0 新增，免雲端 AI 配額即可帶入發票內容）
 - 從電子發票 QR 讀出的**賣方統一編號**（用於下次掃到同店家時自動帶入分類）會儲存於本機 SQLite `merchant_category_map` 表；統編為公開營業登記資訊，不屬個人資料
 
+### 1.7 第三方 SDK 清單
+
+本 App 在 production build 中整合下列第三方 SDK,完整列表如下供您審視（皆受 §1.4 / §2.4 / §1.8 / §三 已述條款規範）：
+
+| SDK 套件 | 用途 | 是否蒐集資料 |
+|---------|------|---------|
+| `google_mobile_ads` (Google AdMob) | 顯示橫幅廣告 | 是,詳見 §1.4 |
+| `firebase_core` / `firebase_auth` / `firebase_app_check` / `cloud_functions` | 拍照辨識（§2.3 / §2.4） | 是,詳見 §2.4 |
+| `in_app_purchase` (Google Play Billing) | Premium 訂閱購買與還原（§1.8） | 是,詳見 §1.8 |
+| `mobile_scanner` / `google_mlkit_barcode_scanning` | 機上 QR / 條碼解析（§1.6） | 否（本機處理） |
+| `image_picker` | 從相簿/相機取得圖片 | 否（OS 內建 photo picker） |
+| `permission_handler` | 取得相機權限 prompt | 否 |
+| `in_app_review` | 顯示 Google Play 內建評分對話框 | 否（互動由 Play 框架處理） |
+| `in_app_update` | Google Play In-App Update API | 否 |
+| `webview_flutter` | 「設定 → 聯絡我們」開啟外部表單 | 否（內容由您填寫,§2.2） |
+| `local_auth` | App 鎖定生物辨識 | 否（本機處理） |
+| `flutter_local_notifications` | 週期性記帳提醒（§三） | 否（本機排程） |
+
+### 1.8 Premium 訂閱（v2.0.0 新增）
+
+本 App 透過 **Google Play Billing**（`in_app_purchase` 套件）提供 Premium 月 / 年訂閱方案。為了驗證訂閱真偽並於換機 / 重灌後還原您的訂閱權益，下列資料會在您完成購買時由 Google Play 與本服務 Firebase Cloud Functions 處理：
+
+| 資料項目 | 蒐集者 | 用途 | 儲存位置 / 期限 |
+|---------|------|------|---------|
+| **purchaseToken**（Google Play 簽發的訂閱憑證） | Google Play → 本服務 Firebase Cloud Functions | 向 Google Play Developer API 驗證訂閱真偽、後續用於還原購買 | Firebase Firestore（asia-east1）；訂閱過期或退款後保留至下次驗證覆寫 |
+| **orderId**（Google Play 訂單號） | Google Play → 本服務 | 於「管理訂閱」深連到該訂單詳情、客服查詢 | 同上 |
+| **expiryTime**（訂閱有效期至） | Google Play Developer API | 判斷 isPremium 狀態、UI 顯示「訂閱有效至 YYYY/MM/DD」 | 同上 + 裝置本機 SQLite `entitlements` 表（離線可用） |
+| **subscriptionState**（ACTIVE / IN_GRACE_PERIOD / CANCELED 等） | Google Play Developer API | 區分「期內取消」與「已過期」以正確 gate Premium 權益 | 同上 |
+| **autoRenewing**（是否自動續訂） | Google Play Developer API | UI 顯示「自動續訂中 / 已關閉自動續訂」 | 同上 |
+| **productId**（訂閱方案 ID：`premium_monthly` / `premium_yearly`） | Google Play Developer API（以伺服器回傳值為準，不採信 client） | 顯示目前方案 / 深連到 Play Store 管理頁 | 同上 |
+
+說明：
+
+1. 上述資料**不包含您的姓名、Email、信用卡號或任何 Google 帳號識別資訊**。Google Play 後端付款流程由 Google 處理，本服務無法存取您的付款工具細節。
+2. 訂閱驗證 callable 透過 §2.4 已述的 **Firebase Anonymous Auth + App Check** 識別請求來源；匿名 UID 不對應您的 Google 帳號或姓名。
+3. 訂閱權益會以單列 cache 儲存於裝置本機 SQLite `entitlements` 表，使本 App 在離線時仍能正確判定您是否為 Premium 使用者。
+4. 您隨時可於 **Google Play Store → 我的訂閱**取消、暫停或變更方案；取消後仍可使用至本期結束日。
+5. 您解除安裝本 App 不會自動取消訂閱，請務必於 Play Store 端取消。
+6. 若您換機或重灌本 App，登入同一個 Google Play 帳號後，本 App 啟動時會背景自動向 Play Store 詢問您的有效訂閱並還原權益；您也可在「設定 → 升級訂閱 → 恢復購買」手動觸發。
+
+Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://play.google.com/intl/zh_tw/about/play-terms/) 規範。
+
 ---
 
 ## 二、網路連線用途
@@ -102,7 +144,7 @@ title: 香蕉記帳 隱私權政策
 | **Firebase Anonymous Auth** | 匿名 UID（一串隨機字串，不含個資；首次啟動產生） | 識別請求來源以執行 §2.3 的每日呼叫次數限額；UID 不對應您的 Google 帳號或姓名 | Google 伺服器 |
 | **Firebase App Check（Play Integrity）** | 由 Google Play 服務簽發的裝置完整性 token、APP 套件名稱（`com.personal.expense_tracker`）、APP 簽章雜湊 | 防止本 App 的 Cloud Function 端點被機器人 / 假 APP 濫用，確保只有來自正式 APP 的請求得到回應 | Google 伺服器 |
 | **Firebase Cloud Functions** | §2.3 所述的圖片內容（即傳即丟、不儲存） | 將圖片轉送 Gemini API 並回傳 OCR 結果 | asia-east1 區域 |
-| **Firebase Firestore** | 匿名 UID + 當日呼叫次數計數 | 執行每日呼叫次數限額 | asia-east1 區域 |
+| **Firebase Firestore** | 匿名 UID + 當日呼叫次數計數 | 執行每日呼叫次數限額。**保留期限：每日計數文件最多保留 30 天**,逾期由排程作業自動刪除（12_4 E4）。 | asia-east1 區域 |
 
 Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy) 與 [Firebase 隱私條款](https://firebase.google.com/support/privacy) 規範。若您未使用拍照辨識功能（包含 §2.3 拍照記帳與股票對帳單），上述網路請求**仍會以 Anonymous Auth + App Check 建立連線**以維持下次使用就緒；但**不會送出任何圖片**。
 
@@ -121,8 +163,11 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 | 觸覺回饋（VIBRATE） | 操作（如刪除、儲存）的輕量震動回饋 |
 | 廣告 ID（AD_ID） | 提供 Google AdMob 投放廣告與計算曝光 |
 | 讀寫儲存空間（READ/WRITE_EXTERNAL_STORAGE，僅限 Android 12 以下） | 匯出/匯入備份檔案 |
-| 讀取相片（READ_MEDIA_IMAGES，Android 13+） | 從相簿選取發票或股票對帳單圖片進行 OCR 辨識 |
 | 相機（CAMERA） | v1.1.0 拍照辨識功能（拍攝發票或股票對帳單進行 OCR 辨識；功能可選） |
+
+> 12_4 E2：移除 `READ_MEDIA_IMAGES`(Android 13+) 列。`image_picker` 1.1.2+ 已
+> 改用系統內建 Photo Picker,不需此權限,Android 13+ 系統也不會再顯示「相簿
+> 存取」prompt。
 
 我們**不會**將上述權限用於任何上述以外的目的。
 
@@ -143,6 +188,10 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 - 本 App 已於 Android 端**明確關閉** Google 雲端自動備份（`android:allowBackup="false"`）與資料擷取（`dataExtractionRules` 已排除資料庫、SharedPreferences 與檔案網域）。
 - 這意味著您的記帳、股票與資產資料**不會**隨 Google 帳號自動上傳至雲端。
 - 換機時請主動使用 App 內「匯出 → 匯入」流程轉移資料；裝置間直接轉移（device-to-device transfer）仍保留支援。
+
+> **裝置間直接轉移（device-to-device transfer）安全性提醒**（12_4 E5）：
+> Android 系統的「換機助手」會以裝置間加密通道傳輸 App 資料，但**收方裝置完成轉移後資料仍以明文還原**至 SQLite / SharedPreferences（即 §七.1 描述的明文儲存狀態）。
+> 為避免資料在新機上被未授權存取，**請先為新機設定鎖屏密碼或生物辨識後再開始 device-to-device 轉移**，並於轉移完成後盡快啟用 App 內建的「App 鎖定」。本 App 開發者無法控制 Android 系統轉移流程中的加密強度。
 
 ---
 
