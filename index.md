@@ -161,7 +161,6 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 | 生物辨識（USE_BIOMETRIC） | App 鎖定（指紋／臉部解鎖） |
 | 觸覺回饋（VIBRATE） | 操作（如刪除、儲存）的輕量震動回饋 |
 | 廣告 ID（AD_ID） | 提供 Google AdMob 投放廣告與計算曝光 |
-| 讀寫儲存空間（READ/WRITE_EXTERNAL_STORAGE，僅限 Android 12 以下） | 匯出/匯入備份檔案 |
 | 相機（CAMERA） | v1.1.0 拍照辨識功能（拍攝發票或股票對帳單進行 OCR 辨識；功能可選） |
 
 > 12_4 E2：移除 `READ_MEDIA_IMAGES`(Android 13+) 列。`image_picker` 1.1.2+ 已
@@ -183,14 +182,24 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 - 您可透過「匯入資料」將備份檔還原至同一台或新的裝置。
 - 匯入過程**不經過任何伺服器**。
 
-### 4.3 關閉 Google 自動備份
-- 本 App 已於 Android 端**明確關閉** Google 雲端自動備份（`android:allowBackup="false"`）與資料擷取（`dataExtractionRules` 已排除資料庫、SharedPreferences 與檔案網域）。
-- 這意味著您的記帳、股票與資產資料**不會**隨 Google 帳號自動上傳至雲端。
-- 換機時請主動使用 App 內「匯出 → 匯入」流程轉移資料；裝置間直接轉移（device-to-device transfer）仍保留支援。
+### 4.3 Google 自動備份與換機 D2D 轉移
 
-> **裝置間直接轉移（device-to-device transfer）安全性提醒**（12_4 E5）：
-> Android 系統的「換機助手」會以裝置間加密通道傳輸 App 資料，但**收方裝置完成轉移後資料仍以明文還原**至 SQLite / SharedPreferences（即 §七.1 描述的明文儲存狀態）。
-> 為避免資料在新機上被未授權存取，**請先為新機設定鎖屏密碼或生物辨識後再開始 device-to-device 轉移**，並於轉移完成後盡快啟用 App 內建的「App 鎖定」。本 App 開發者無法控制 Android 系統轉移流程中的加密強度。
+自 v2.0.1 起，本 App 已**開啟** Android 的 Auto Backup 與裝置間直接轉移（device-to-device transfer），以避免使用者忘記匯出而於換機 / 重灌時遺失財務資料：
+
+- **Google 雲端自動備份**（`android:allowBackup="true"` + `dataExtractionRules` 的 `<cloud-backup>`）：
+  - 包含內容：SQLite 資料庫（記帳、股票、資產、設定）、SharedPreferences、App 私有檔案；排除 `external` 目錄。
+  - 備份檔由 Google 加密儲存於使用者**自己的 Google Drive**配額內，Google 客服與本 App 開發者皆無法直接讀取內容。
+  - 您可隨時於 **Android 設定 → Google → 備份** 內關閉本 App 的備份、刪除既有備份。
+
+- **裝置間直接轉移**（D2D / 換機助手，`<device-transfer>`）：
+  - 換機時 Android 系統會以裝置間加密通道將 SQLite / SharedPreferences / App 私有檔案複製到新機。
+  - 您也可以選擇**仍走 App 內「匯出 → 匯入」JSON 流程**，做為跨平台 / 跨帳號的可控替代方案。
+
+> **安全性提醒**（12_4 E5）：
+> 收方裝置在 D2D 或 Google 雲端還原完成後，App 資料仍以明文方式存於 SQLite / SharedPreferences（即 §七.1 描述的明文儲存狀態）。
+> **請先為新機設定鎖屏密碼或生物辨識後再開始轉移 / 還原**，並於完成後盡快啟用 App 內建的「App 鎖定」。本 App 開發者無法控制 Android 系統轉移與雲端還原流程中的加密強度。
+
+> **訂閱憑證安全提醒**：若您的舊機曾購買 Premium 訂閱，備份 / 還原至新機時，purchaseToken 會一併還原。本 App 後端（Cloud Functions）會在新機呼叫時偵測「同一購買憑證綁定到不同匿名 UID」並自動撤銷舊 UID 的 Premium 狀態（防止單張訂閱跨多帳號濫用），不影響您在新機正常使用訂閱權益。
 
 ---
 
