@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-05-23**
+**最後更新日期：2026-05-26**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -88,7 +88,7 @@ title: 香蕉記帳 隱私權政策
 
 | 資料項目 | 蒐集者 | 用途 | 儲存位置 / 期限 |
 |---------|------|------|---------|
-| **purchaseToken**（Google Play 簽發的訂閱憑證） | Google Play → 本服務 Firebase Cloud Functions | 向 Google Play Developer API 驗證訂閱真偽、後續用於還原購買 | Firebase Firestore（asia-east1）；訂閱過期或退款後保留至下次驗證覆寫 |
+| **purchaseToken**（Google Play 簽發的訂閱憑證） | Google Play → 本服務 Firebase Cloud Functions | 向 Google Play Developer API 驗證訂閱真偽、後續用於還原購買 | Firebase Firestore（asia-east1）；訂閱結束後仍保留供退款 / 爭議處理（詳見 §5.2，您可依 §5.3 申請刪除） |
 | **orderId**（Google Play 訂單號） | Google Play → 本服務 | 於「管理訂閱」深連到該訂單詳情、客服查詢 | 同上 |
 | **expiryTime**（訂閱有效期至） | Google Play Developer API | 判斷 isPremium 狀態、UI 顯示「訂閱有效至 YYYY/MM/DD」 | 同上 + 裝置本機 SQLite `entitlements` 表（離線可用） |
 | **subscriptionState**（ACTIVE / IN_GRACE_PERIOD / CANCELED 等） | Google Play Developer API | 區分「期內取消」與「已過期」以正確 gate Premium 權益 | 同上 |
@@ -100,9 +100,10 @@ title: 香蕉記帳 隱私權政策
 1. 上述資料**不包含您的姓名、Email、信用卡號或任何 Google 帳號識別資訊**。Google Play 後端付款流程由 Google 處理，本服務無法存取您的付款工具細節。
 2. 訂閱驗證 callable 透過 §2.4 已述的 **Firebase Anonymous Auth + App Check** 識別請求來源；匿名 UID 不對應您的 Google 帳號或姓名。
 3. 訂閱權益會以單列 cache 儲存於裝置本機 SQLite `entitlements` 表，使本 App 在離線時仍能正確判定您是否為 Premium 使用者。
-4. 您隨時可於 **Google Play Store → 我的訂閱**取消、暫停或變更方案；取消後仍可使用至本期結束日。
-5. 您解除安裝本 App 不會自動取消訂閱，請務必於 Play Store 端取消。
-6. 若您換機或重灌本 App，登入同一個 Google Play 帳號後，本 App 啟動時會背景自動向 Play Store 詢問您的有效訂閱並還原權益；您也可在「設定 → 升級訂閱 → 恢復購買」手動觸發。
+4. **試用與自動扣款揭露**：月訂閱方案（`premium_monthly`）首次訂閱者享 **7 天免費試用**；試用期間若您未於 Google Play Store 取消，將於試用結束時依您 Play Store 綁定的付款方式**自動扣款續訂為月訂閱**，並於之後每月自動續訂直至取消。年訂閱方案（`premium_yearly`）無試用期。完整自動續訂、價格調整與取消條款請參閱本 App「設定 → 服務條款」§5。
+5. 您隨時可於 **Google Play Store → 我的訂閱**取消、暫停或變更方案；取消後仍可使用至本期結束日。若於 7 天試用期內取消，將不會被收取任何費用。
+6. 您解除安裝本 App 不會自動取消訂閱，請務必於 Play Store 端取消。
+7. 若您換機或重灌本 App，登入同一個 Google Play 帳號後，本 App 啟動時會背景自動向 Play Store 詢問您的有效訂閱並還原權益；您也可在「設定 → 升級訂閱 → 恢復購買」手動觸發。
 
 Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://play.google.com/intl/zh_tw/about/play-terms/) 規範。
 
@@ -219,7 +220,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 | 資料 | 路徑 | 用途 | 保留期限 |
 |------|------|------|---------|
 | 每日呼叫次數計數 | `quotas/{anonUid}` | 拍照辨識每日呼叫上限管控（防止濫用） | **最多 30 天**，逾期由排程作業自動刪除（12_4 E4） |
-| 訂閱憑證 | `subscriptions/{anonUid}` | 驗證 Premium 訂閱狀態、防止單一購買憑證跨多帳號共用、處理退款 | 訂閱結束後仍保留作為退款與爭議處理依據（無自動刪除） |
+| 訂閱憑證 | `subscriptions/{anonUid}` | 驗證 Premium 訂閱狀態、防止單一購買憑證跨多帳號共用、處理退款 | 訂閱結束後仍保留作為退款與爭議處理依據（無固定刪除期限）；您可隨時依 §5.3 申請刪除 |
 
 上述資料僅以 Firebase **匿名 UID**（系統自動產生、無法回推至特定個人）為索引，**不包含姓名、電話、Email、生日等個人識別資訊**。
 
@@ -228,7 +229,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 如您希望刪除 §5.2 所列伺服器端的資料，請以以下方式提出申請：
 
 - **Email**：`banana87168@gmail.com`
-- **信件內容請提供**：您 App 內「設定 → 關於 → 匿名識別碼」顯示的識別碼（或 App 安裝時間與大致使用區域，協助比對）
+- **信件內容請提供**：您的 App 安裝時間與大致使用區域，協助比對
 - **處理時程**：自收件起 **30 日內**處理完成並回覆
 
 > 註：申請刪除後，您原有的 Premium 訂閱憑證對應紀錄將一併移除，未來無法以該裝置 / 匿名 UID 自動還原 Premium 狀態（仍可透過 Google Play 的「還原購買」流程重新綁定）。
