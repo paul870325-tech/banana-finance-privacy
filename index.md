@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-05-28**
+**最後更新日期：2026-05-30**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -133,7 +133,7 @@ Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://
 1. 您拍攝或選取的圖片會以 **HTTPS 加密**傳輸至本服務的 Firebase Cloud Functions（Google Cloud，asia-east1 區域）
 2. Cloud Functions 將圖片轉送至 Google **Generative Language API（Gemini 2.5 Flash-Lite / Flash 模型）** 進行 OCR 辨識
 3. 圖片**不會被本服務儲存**（傳輸完成即刻丟棄，僅暫存於記憶體中處理）
-4. 為防止濫用，我們會以 **匿名 UID** 記錄每日呼叫次數（不包含圖片內容、不可關聯到個人身分；資料以 Firestore 保存於 asia-east1）
+4. 為防止濫用，我們會以 **匿名 UID** 記錄每月呼叫次數（不包含圖片內容、不可關聯到個人身分；資料以 Firestore 保存於 asia-east1）
 5. Google 對 Gemini API 的資料處理規範請參見 [Google AI Studio 服務條款](https://ai.google.dev/terms)
 6. 第一次使用時 APP 會顯示同意對話框；您**未同意前不會傳送任何圖片**
 7. 若您不希望使用此功能，所有記帳與股票資料都可以**手動輸入**完成，功能完全可選
@@ -143,10 +143,10 @@ Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://
 
 | 子服務 | 蒐集內容 | 用途 | 儲存位置 |
 |--------|---------|------|---------|
-| **Firebase Anonymous Auth** | 匿名 UID（一串隨機字串，不含個資；首次啟動產生） | 識別請求來源以執行 §2.3 的每日呼叫次數限額；UID 不對應您的 Google 帳號或姓名 | Google 伺服器 |
+| **Firebase Anonymous Auth** | 匿名 UID（一串隨機字串，不含個資；首次啟動產生） | 識別請求來源以執行 §2.3 的每月呼叫次數限額；UID 不對應您的 Google 帳號或姓名 | Google 伺服器 |
 | **Firebase App Check（Play Integrity）** | 由 Google Play 服務簽發的裝置完整性 token、APP 套件名稱（`com.personal.expense_tracker`）、APP 簽章雜湊 | 防止本 App 的 Cloud Function 端點被機器人 / 假 APP 濫用，確保只有來自正式 APP 的請求得到回應 | Google 伺服器 |
 | **Firebase Cloud Functions** | §2.3 所述的圖片內容（即傳即丟、不儲存） | 將圖片轉送 Gemini API 並回傳 OCR 結果 | asia-east1 區域 |
-| **Firebase Firestore** | 匿名 UID + 當日呼叫次數計數 | 執行每日呼叫次數限額。**保留期限：每日計數文件最多保留 30 天**,逾期由排程作業自動刪除（12_4 E4）。 | asia-east1 區域 |
+| **Firebase Firestore** | 匿名 UID + 當月呼叫次數計數 | 執行每月呼叫次數限額。**保留期限：每月計數文件最多保留約 13 個月**,逾期由排程作業自動刪除（12_4 E4）。 | asia-east1 區域 |
 
 Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy) 與 [Firebase 隱私條款](https://firebase.google.com/support/privacy) 規範。若您未使用拍照辨識功能（包含 §2.3 拍照記帳與股票對帳單），上述網路請求**仍會以 Anonymous Auth + App Check 建立連線**以維持下次使用就緒；但**不會送出任何圖片**。
 
@@ -219,7 +219,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 
 | 資料 | 路徑 | 用途 | 保留期限 |
 |------|------|------|---------|
-| 每日呼叫次數計數 | `quotas/{anonUid}` | 拍照辨識每日呼叫上限管控（防止濫用） | **最多 30 天**，逾期由排程作業自動刪除（12_4 E4） |
+| 每月呼叫次數計數 | `quotas/{anonUid}` | 拍照辨識每月呼叫上限管控（防止濫用） | **最多約 13 個月**，逾期由排程作業自動刪除（12_4 E4） |
 | 訂閱憑證 | `subscriptions/{anonUid}` | 驗證 Premium 訂閱狀態、防止單一購買憑證跨多帳號共用、處理退款 | 訂閱結束後仍保留作為退款與爭議處理依據（無固定刪除期限）；您可隨時依 §5.3 申請刪除 |
 
 上述資料僅以 Firebase **匿名 UID**（系統自動產生、無法回推至特定個人）為索引，**不包含姓名、電話、Email、生日等個人識別資訊**。
