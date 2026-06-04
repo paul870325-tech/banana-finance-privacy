@@ -228,7 +228,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 
 如您希望刪除 §5.2 所列伺服器端的資料，請以以下方式提出申請：
 
-- **Email**：`banana87168@gmail.com`
+- **Email**：[banana87168@gmail.com](mailto:banana87168@gmail.com)
 - **信件內容請提供**：您的 App 安裝時間與大致使用區域，協助比對
 - **處理時程**：自收件起 **30 日內**處理完成並回覆
 
