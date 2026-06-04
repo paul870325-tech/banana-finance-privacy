@@ -170,7 +170,9 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 > 改用系統內建 Photo Picker,不需此權限,Android 13+ 系統也不會再顯示「相簿
 > 存取」prompt。
 
-我們**不會**將上述權限用於任何上述以外的目的。
+上表為本 App 主動宣告的權限。此外，本 App 使用的第三方 SDK（Firebase、Google Play 服務、Google AdMob 等）在建置時可能由系統自動合併少數標準框架權限（例如網路狀態 `ACCESS_NETWORK_STATE`、喚醒鎖 `WAKE_LOCK`、廣告服務 `ADSERVICES_*` 與相關系統接收器等）。這些屬框架層權限，僅用於支援上表及第二節所述之已揭露功能（股票報價、廣告投放、Firebase 連線與通知），不會用於其他目的。
+
+我們**不會**將上述任何權限（含 SDK 自動合併的框架權限）用於已揭露功能以外的目的。
 
 ---
 
