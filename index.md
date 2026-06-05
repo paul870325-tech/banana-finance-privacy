@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-06-03**
+**最後更新日期：2026-06-05**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -28,10 +28,12 @@ title: 香蕉記帳 隱私權政策
 - 您的裝置識別碼（IMEI、Android ID 等；廣告 ID / AAID 由 1.4 節 AdMob SDK 自行蒐集；Firebase Anonymous Auth UID 與 App Check Play Integrity 由 §2.4 說明，本 App 開發者皆無法存取原始資料）
 
 ### 1.3 不使用分析或追蹤工具（廣告除外）
-除下列第 1.4 節說明的廣告 SDK 外，本 App **不整合**任何第三方分析、追蹤 SDK，包含但不限於：
-- Google Analytics / Firebase Analytics
+除下列第 1.4 節說明的廣告 SDK 外，本 App 開發者**未自行整合**任何獨立的第三方分析、追蹤 SDK，包含但不限於：
+- Google Analytics / Firebase Analytics（開發者未自行加入）
 - Facebook SDK
 - 崩潰回報（Crashlytics、Sentry 等）
+
+惟需說明：第 1.4 節的 **Google AdMob**（Google Mobile Ads SDK）內部會隨附 Google 的廣告成效量測元件（app-measurement，與 Google／Firebase Analytics 同源的底層量測模組），用於衡量廣告投放成效與防止點擊詐騙。此元件屬廣告 SDK 的一部分，其蒐集之資料與用途已涵蓋於第 1.4 節，**並非**開發者另行整合之使用者行為分析工具，開發者亦無法存取其原始資料。
 
 ### 1.4 廣告 SDK（Google AdMob）
 為了維持本 App 免費提供，本 App 透過 **Google AdMob** 顯示橫幅廣告。AdMob 為 Google 提供之廣告聯播網，會自行蒐集以下資料以投放廣告與防止點擊詐騙：
