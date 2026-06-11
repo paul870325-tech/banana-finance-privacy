@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-06-05**
+**最後更新日期：2026-06-11**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -36,7 +36,13 @@ title: 香蕉記帳 隱私權政策
 惟需說明：第 1.4 節的 **Google AdMob**（Google Mobile Ads SDK）內部會隨附 Google 的廣告成效量測元件（app-measurement，與 Google／Firebase Analytics 同源的底層量測模組），用於衡量廣告投放成效與防止點擊詐騙。此元件屬廣告 SDK 的一部分，其蒐集之資料與用途已涵蓋於第 1.4 節，**並非**開發者另行整合之使用者行為分析工具，開發者亦無法存取其原始資料。
 
 ### 1.4 廣告 SDK（Google AdMob）
-為了維持本 App 免費提供，本 App 透過 **Google AdMob** 顯示橫幅廣告。AdMob 為 Google 提供之廣告聯播網，會自行蒐集以下資料以投放廣告與防止點擊詐騙：
+為了維持本 App 免費提供，本 App 透過 **Google AdMob** 顯示下列三種格式之廣告：
+
+- **橫幅廣告**：固定顯示於部分次要頁面底部
+- **插頁（全螢幕）廣告**：於特定操作（如切換記帳日期區間）後偶爾顯示，設有冷卻時間與顯示頻率上限
+- **獎勵式廣告**：僅在您主動於「免廣告」頁面選擇觀看時播放，看完即可獲得 24 小時免廣告
+
+AdMob 為 Google 提供之廣告聯播網，上述三種格式皆由同一 SDK 投放，會自行蒐集以下資料以投放廣告與防止點擊詐騙：
 
 - **廣告識別碼（Advertising ID / AAID）**：可由您於系統設定中重設或停用
 - **概略地理位置**（依 IP 推算的國家／城市等級，非精確 GPS）
@@ -72,7 +78,7 @@ title: 香蕉記帳 隱私權政策
 
 | SDK 套件 | 用途 | 是否蒐集資料 |
 |---------|------|---------|
-| `google_mobile_ads` (Google AdMob) | 顯示橫幅廣告 | 是,詳見 §1.4 |
+| `google_mobile_ads` (Google AdMob) | 顯示橫幅、插頁（全螢幕）與獎勵式廣告 | 是,詳見 §1.4 |
 | `firebase_core` / `firebase_auth` / `firebase_app_check` / `cloud_functions` | 拍照辨識（§2.3 / §2.4） | 是,詳見 §2.4 |
 | `in_app_purchase` (Google Play Billing) | Premium 訂閱購買與還原（§1.8） | 是,詳見 §1.8 |
 | `mobile_scanner` / `google_mlkit_barcode_scanning` | 機上 QR / 條碼解析（§1.6） | 否（本機處理） |
