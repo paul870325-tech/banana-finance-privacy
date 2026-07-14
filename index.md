@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-07-13**
+**最後更新日期：2026-07-14**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -124,7 +124,7 @@ Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://
 本 App 僅在以下情況使用網路：
 
 ### 2.1 股票／加密貨幣即時報價與匯率查詢
-- 為了顯示您持有股票、加密貨幣的「現值」與「盈虧」（含美股／加密貨幣的台幣換算），本 App 會向 **Yahoo Finance 公開 API**（`query1.finance.yahoo.com`）查詢即時報價與匯率。
+- 為了顯示您持有股票、加密貨幣的「現值」與「盈虧」（含美股／加密貨幣的台幣換算），本 App 會向 **Yahoo Finance 公開 API**（`query1.finance.yahoo.com`）查詢即時報價與匯率。查詢報價前，本 App 會先向 Yahoo Finance 網站（`finance.yahoo.com`）發出一次請求，以取得存取公開 API 所需的存取權杖（cookie／crumb）；此步驟**僅**用於取得存取權杖，**不會**傳送任何個人資料、持股數量或買入價格。
 - 查詢時**僅傳送公開市場查詢符號**——股票代碼（例如 `2330.TW`、`AAPL`）、加密貨幣報價對（例如 `BTC-USD`）與匯率符號（例如 `TWD=X`），**不會**傳送任何個人資料、持股數量或買入價格。
 - Yahoo Finance 為公開 API，不需註冊或登入。
 
@@ -190,6 +190,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 | 觸覺回饋（VIBRATE） | 操作（如刪除、儲存）的輕量震動回饋 |
 | 廣告 ID（AD_ID） | 提供 Google AdMob 投放廣告與計算曝光 |
 | 相機（CAMERA） | v1.1.0 拍照辨識功能（拍攝發票或股票對帳單進行 OCR 辨識；功能可選） |
+| 應用程式內購買（com.android.vending.BILLING） | 提供 App 內訂閱（Premium 進階功能）的購買與還原 |
 
 > 12_4 E2：移除 `READ_MEDIA_IMAGES`(Android 13+) 列。`image_picker` 1.1.2+ 已
 > 改用系統內建 Photo Picker,不需此權限,Android 13+ 系統也不會再顯示「相簿
