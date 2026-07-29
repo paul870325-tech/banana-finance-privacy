@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-07-14**
+**最後更新日期：2026-07-27**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -75,7 +75,7 @@ AdMob 為 Google 提供之廣告聯播網，上述三種格式皆由同一 SDK �
 
 ### 1.7 第三方 SDK 清單
 
-本 App 在 production build 中整合下列第三方 SDK,完整列表如下供您審視（皆受 §1.4 / §2.4 / §1.8 / §三 已述條款規範）：
+本 App 在 production build 中整合下列**會連線外部服務或涉及資料蒐集**的第三方 SDK 供您審視（皆受 §1.4 / §2.4 / §1.8 / §三 已述條款規範）；另有純本機運作、不蒐集亦不傳輸任何資料的基礎套件（如 `sqflite` 本機資料庫、`shared_preferences` 偏好設定、`file_picker` / `share_plus` 匯出分享等）未逐一列於下表：
 
 | SDK 套件 | 用途 | 是否蒐集資料 |
 |---------|------|---------|
@@ -87,7 +87,7 @@ AdMob 為 Google 提供之廣告聯播網，上述三種格式皆由同一 SDK �
 | `permission_handler` | 取得相機權限 prompt | 否 |
 | `in_app_review` | 顯示 Google Play 內建評分對話框 | 否（互動由 Play 框架處理） |
 | `in_app_update` | Google Play In-App Update API | 否 |
-| `webview_flutter` | 「設定 → 聯絡我們」開啟外部表單 | 否（內容由您填寫,§2.2） |
+| `webview_flutter` | 「設定 → 聯絡我們」開啟外部表單 | 是,詳見 §2.2（開啟頁面即向 Google 送出 IP／User-Agent／cookie；填寫內容另由您決定） |
 | `local_auth` | App 鎖定生物辨識 | 否（本機處理） |
 | `flutter_local_notifications` | 週期性記帳提醒（§三） | 否（本機排程） |
 | `google_fonts` | 首次啟動時下載並快取思源黑體中文字型（§2.5） | 是,詳見 §2.5（僅 IP／連線中介資料） |
@@ -104,11 +104,15 @@ AdMob 為 Google 提供之廣告聯播網，上述三種格式皆由同一 SDK �
 | **subscriptionState**（ACTIVE / IN_GRACE_PERIOD / CANCELED 等） | Google Play Developer API | 區分「期內取消」與「已過期」以正確 gate Premium 權益 | 同上 |
 | **autoRenewing**（是否自動續訂） | Google Play Developer API | UI 顯示「自動續訂中 / 已關閉自動續訂」 | 同上 |
 | **productId**（訂閱方案 ID：`premium_monthly` / `premium_yearly`） | Google Play Developer API（以伺服器回傳值為準，不採信 client） | 顯示目前方案 / 深連到 Play Store 管理頁 | 同上 |
+| **tier**（權益等級：`free` / `subscriber`） | 本服務 Cloud Functions 依驗證結果推得 | 判定是否給予 Premium 權益 | 同上 |
+| **validatedAt**（最後一次驗證時間） | 本服務 Cloud Functions | 判斷憑證是否需要重新驗證、稽核 | 同上 |
+| **revoked**（權益是否已撤銷）／**inTrial**（是否在試用期）／**queuedProductId**（已排入下期的方案 ID） | 本服務 Cloud Functions 依 Google Play Developer API 回傳值推得 | 正確 gate Premium 權益、顯示試用與方案變更狀態 | 同上 |
 
 說明：
 
 1. 上述資料**不包含您的姓名、Email、信用卡號或任何 Google 帳號識別資訊**。Google Play 後端付款流程由 Google 處理，本服務無法存取您的付款工具細節。
 2. 訂閱驗證 callable 透過 §2.4 已述的 **Firebase Anonymous Auth + App Check** 識別請求來源；匿名 UID 不對應您的 Google 帳號或姓名。
+2-1. **跨裝置還原時的匿名 UID 關聯**：同一張購買憑證只能對應一個匿名 UID。當您換機或重灌後以同一個 Google Play 帳號還原訂閱，本服務會把該憑證改綁到新的匿名 UID，並在**舊的匿名 UID 紀錄**上標記已撤銷、撤銷原因、撤銷時間，以及**接手的新匿名 UID**（欄位 `revokedInFavorOf`），以利退款與爭議處理時追溯。這代表同一位使用者先後使用過的多個匿名 UID 之間會留下關聯紀錄；這些 UID 皆為系統自動產生，**仍不包含也無法回推姓名、Email 或 Google 帳號**。您可依 §5.3 申請刪除。
 3. 訂閱權益會以單列 cache 儲存於裝置本機 SQLite `entitlements` 表，使本 App 在離線時仍能正確判定您是否為 Premium 使用者。
 4. **試用與自動扣款揭露**：月訂閱方案（`premium_monthly`）首次訂閱者享 **7 天免費試用**；試用期間若您未於 Google Play Store 取消，將於試用結束時依您 Play Store 綁定的付款方式**自動扣款續訂為月訂閱**，並於之後每月自動續訂直至取消。年訂閱方案（`premium_yearly`）無試用期。完整自動續訂、價格調整與取消條款請參閱本 App「設定 → 服務條款」§5。
 5. 您隨時可於 **Google Play Store → 我的訂閱**取消、暫停或變更方案；取消後仍可使用至本期結束日。若於 7 天試用期內取消，將不會被收取任何費用。
@@ -136,9 +140,11 @@ Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://
 - 這些皆為**公開資料下載**：本 App **僅發出下載請求取得公開清單**，**不會**傳送您的股票代碼、持股數量、買入價格或任何個人資料；這些端點為公開資料服務，不需註冊或登入。
 
 ### 2.2 意見回饋（選用）
-- 「設定 → 聯絡我們」功能會開啟外部 Google 表單（forms.gle）。
-- 您**選擇性**填寫該表單時，所填寫的內容由 Google 處理，受 [Google 隱私權政策](https://policies.google.com/privacy) 規範。
-- 您可選擇不填寫，不影響 App 任何功能。
+- 「設定 → 聯絡我們」功能會在 App 內建的網頁檢視中開啟外部 Google 表單（forms.gle）。
+- **只要開啟這個頁面**（即使您什麼都不填、隨即離開），載入該表單本身就會向 Google 發出網路請求，因而讓 Google 取得一般網路連線必要的中介資料——**您的 IP 位址、裝置 User-Agent，以及該表單所設定的 cookie 與分析用請求**。這與 §2.5 字型下載屬同一類「載入即發生」的第三方連線。
+- 您**選擇性**填寫該表單時，所填寫的內容另由 Google 處理。上述兩者皆受 [Google 隱私權政策](https://policies.google.com/privacy) 規範。
+- 本 App **不會**在開啟表單時自動附帶任何您的記帳／股票／資產資料，也不會自動帶入版本號或裝置資訊（表單欄位一律由您自行填寫）。
+- 您可選擇不開啟此頁面或不填寫，皆不影響 App 任何功能。
 
 ### 2.3 拍照辨識功能（記帳 + 股票對帳單，v1.1.0 新增）
 本 App 提供兩處主動觸發的圖片辨識功能：
@@ -184,7 +190,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 | 權限 | 用途 |
 |------|------|
 | 網路存取（INTERNET） | 查詢股票即時報價、載入 AdMob 廣告、Firebase Cloud Functions / Auth / App Check / Firestore（拍照辨識所需，詳見 §2.3／§2.4）、下載中文字型（詳見 §2.5） |
-| 通知（POST_NOTIFICATIONS） | 顯示週期性記帳的提醒通知 |
+| 通知（POST_NOTIFICATIONS） | 顯示本機排程的提醒通知：週期性記帳提醒、預算門檻提醒、儲蓄月結提醒、股票即將除息提醒 |
 | 開機啟動（RECEIVE_BOOT_COMPLETED） | 重新註冊週期性提醒 |
 | 生物辨識（USE_BIOMETRIC） | App 鎖定（指紋／臉部解鎖） |
 | 觸覺回饋（VIBRATE） | 操作（如刪除、儲存）的輕量震動回饋 |
@@ -249,6 +255,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 |------|------|------|---------|
 | 每月呼叫次數計數 | `quotas/{anonUid}` | 拍照辨識每月呼叫上限管控（防止濫用） | **最多約 13 個月**，逾期由排程作業自動刪除（12_4 E4） |
 | 訂閱憑證 | `subscriptions/{anonUid}` | 驗證 Premium 訂閱狀態、防止單一購買憑證跨多帳號共用、處理退款 | 訂閱結束後仍保留作為退款與爭議處理依據（無固定刪除期限）；您可隨時依 §5.3 申請刪除 |
+| 配額退還失敗紀錄 | `quota_refund_failures/{自動 ID}` | 拍照辨識失敗時要退還已預扣的次數，若當下退還失敗則寫入此處待自動重試（內容為匿名 UID、日期、辨識類型、方案別與錯誤訊息摘要，**不含圖片或辨識內容**） | **最多 90 天**，逾期由排程作業自動刪除；退還成功即立即刪除 |
 
 上述資料僅以 Firebase **匿名 UID**（系統自動產生、無法回推至特定個人）為索引，**不包含姓名、電話、Email、生日等個人識別資訊**。
 
