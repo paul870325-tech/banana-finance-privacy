@@ -5,7 +5,7 @@ title: 香蕉記帳 隱私權政策
 
 # 香蕉記帳 隱私權政策
 
-**最後更新日期：2026-08-05**
+**最後更新日期：2026-08-09**
 **生效日期：2026-05-18**
 
 感謝您使用「香蕉記帳」（以下簡稱「本 App」）。我們非常重視您的隱私，本政策將清楚說明本 App 如何處理您的資料。
@@ -20,7 +20,7 @@ title: 香蕉記帳 隱私權政策
 除您主動使用之拍照辨識、廣告與 Premium 訂閱等功能所涉及之第三方服務（另詳 §1.4、§1.8、§2.3、§2.4）外，我們**不會**將上述任何由您輸入的記帳 / 股票 / 資產資料上傳至任何雲端伺服器，也**不會**傳送給開發者或任何第三方。
 
 ### 1.2 不蒐集個人識別資訊
-本 App **開發者本身不會**蒐集以下任何資訊（下列第 1.4 節說明的 Google AdMob、第 2.4 節說明的 Firebase 服務透過 SDK 自行蒐集者除外）：
+本 App **開發者本身不會**蒐集以下任何資訊（下列第 1.4 節說明的 Google AdMob、第 2.4 節說明的 Firebase 服務透過 SDK 自行蒐集者，以及您主動使用 §2.2 意見回饋表單或依 §5.3 寄送 Email 與開發者聯繫時、由您自行提供的內容除外）：
 - 您的姓名、Email、電話、地址、身分證字號
 - 您的 Google 帳號、Facebook 帳號或其他登入資訊
 - 您的位置（GPS / 定位）
@@ -72,6 +72,7 @@ AdMob 為 Google 提供之廣告聯播網，上述三種格式皆由同一 SDK �
 - **不會將相機畫面、QR payload 或條碼內容傳輸至任何伺服器**
 - 用途包含：拍照辨識前先偵測 OCR 用條碼以遮蔽（避免送雲端時洩漏條碼資訊）、台灣電子發票 QR 解析（v1.2.0 新增，免雲端 AI 配額即可帶入發票內容）
 - 從電子發票 QR 讀出的**賣方統一編號**（用於下次掃到同店家時自動帶入分類）會儲存於本機 SQLite `merchant_category_map` 表；統編為公開營業登記資訊，不屬個人資料
+- 若該次拍照辨識**沒有**可用的發票 QR，則會改以 §2.3 雲端 AI 辨識出的**商家名稱**（經正規化後的字串）存入同一張 `merchant_category_map` 表，同樣用於下次自動帶入分類。此對應表**僅保存於裝置本機**，可透過「設定 → 清除所有資料」移除
 
 ### 1.7 第三方 SDK 清單
 
@@ -80,14 +81,14 @@ AdMob 為 Google 提供之廣告聯播網，上述三種格式皆由同一 SDK �
 | SDK 套件 | 用途 | 是否蒐集資料 |
 |---------|------|---------|
 | `google_mobile_ads` (Google AdMob) | 顯示橫幅、插頁（全螢幕）與獎勵式廣告 | 是,詳見 §1.4 |
-| `firebase_core` / `firebase_auth` / `firebase_app_check` / `cloud_functions` | 拍照辨識（§2.3 / §2.4） | 是,詳見 §2.4 |
+| `firebase_core` / `firebase_auth` / `firebase_app_check` / `cloud_functions` | 拍照辨識（§2.3 / §2.4）**與 Premium 訂閱驗證／還原（§1.8）** | 是,詳見 §2.4 與 §1.8 |
 | `in_app_purchase` (Google Play Billing) | Premium 訂閱購買與還原（§1.8） | 是,詳見 §1.8 |
 | `mobile_scanner` / `google_mlkit_barcode_scanning` | 機上 QR / 條碼解析（§1.6） | 否（本機處理） |
 | `image_picker` | 從相簿/相機取得圖片 | 否（OS 內建 photo picker） |
 | `permission_handler` | 取得相機權限 prompt | 否 |
 | `in_app_review` | 顯示 Google Play 內建評分對話框 | 否（互動由 Play 框架處理） |
 | `in_app_update` | Google Play In-App Update API | 否 |
-| `webview_flutter` | 「設定 → 聯絡我們」開啟外部表單 | 是,詳見 §2.2（開啟頁面即向 Google 送出 IP／User-Agent／cookie；填寫內容另由您決定） |
+| `webview_flutter` | 「設定 → 聯絡我們」開啟外部表單 | 是,詳見 §2.2（開啟頁面即向 Google 送出 IP／User-Agent／cookie；填寫內容由 Google 與開發者取得，詳見 §2.2） |
 | `local_auth` | App 鎖定生物辨識 | 否（本機處理） |
 | `flutter_local_notifications` | 週期性記帳提醒（§三） | 否（本機排程） |
 | `google_fonts` | 首次啟動時下載並快取思源黑體中文字型（§2.5） | 是,詳見 §2.5（僅 IP／連線中介資料） |
@@ -143,6 +144,7 @@ Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://
 - 「設定 → 聯絡我們」功能會在 App 內建的網頁檢視中開啟外部 Google 表單（forms.gle）。
 - **只要開啟這個頁面**（即使您什麼都不填、隨即離開），載入該表單本身就會向 Google 發出網路請求，因而讓 Google 取得一般網路連線必要的中介資料——**您的 IP 位址、裝置 User-Agent，以及該表單所設定的 cookie 與分析用請求**。這與 §2.5 字型下載屬同一類「載入即發生」的第三方連線。
 - 您**選擇性**填寫該表單時，所填寫的內容另由 Google 處理。上述兩者皆受 [Google 隱私權政策](https://policies.google.com/privacy) 規範。
+- 該表單由本 App 開發者建立。您送出的內容（含您**若自行填寫**的聯絡方式）除由 Google 依其隱私權政策處理外，也會進入開發者綁定的 Google 試算表，**僅用於回覆與追蹤您回報的問題**，不會用於行銷或其他目的；您可依 §5.3 的方式要求刪除。
 - 本 App **不會**在開啟表單時自動附帶任何您的記帳／股票／資產資料，也不會自動帶入版本號或裝置資訊（表單欄位一律由您自行填寫）。
 - 您可選擇不開啟此頁面或不填寫，皆不影響 App 任何功能。
 
@@ -161,15 +163,15 @@ Google Play Billing 與訂閱資料處理受 [Google Play 服務條款](https://
 6. 第一次使用時 APP 會顯示同意對話框；您**未同意前不會傳送任何圖片**
 7. 若您不希望使用此功能，所有記帳與股票資料都可以**手動輸入**完成，功能完全可選
 
-### 2.4 Firebase 服務（拍照辨識所需）
-為支援 §2.3 之拍照辨識功能，本 App 使用 Google **Firebase** 平台的下列服務，**皆由 Google 蒐集、儲存與處理**，本 App 開發者無法存取原始識別資料：
+### 2.4 Firebase 服務（拍照辨識與訂閱驗證所需）
+為支援 §2.3 之拍照辨識功能，以及 §1.8 之 Premium 訂閱驗證與還原，本 App 使用 Google **Firebase** 平台的下列服務，**皆由 Google 蒐集、儲存與處理**，本 App 開發者無法存取原始識別資料：
 
 | 子服務 | 蒐集內容 | 用途 | 儲存位置 |
 |--------|---------|------|---------|
 | **Firebase Anonymous Auth** | 匿名 UID（一串隨機字串，不含個資；首次啟動產生） | 識別請求來源以執行 §2.3 的每月呼叫次數限額；UID 不對應您的 Google 帳號或姓名 | Google 伺服器 |
 | **Firebase App Check（Play Integrity）** | 由 Google Play 服務簽發的裝置完整性 token、APP 套件名稱（`com.personal.expense_tracker`）、APP 簽章雜湊 | 防止本 App 的 Cloud Function 端點被機器人 / 假 APP 濫用，確保只有來自正式 APP 的請求得到回應 | Google 伺服器 |
 | **Firebase Cloud Functions** | §2.3 所述的圖片內容，以及拍照記帳一併送出的收支分類名稱清單（皆即傳即丟、不儲存） | 將圖片與分類名稱清單轉送 Gemini API 並回傳 OCR 結果 | asia-east1 區域 |
-| **Firebase Firestore** | 匿名 UID + 當月呼叫次數計數 | 執行每月呼叫次數限額。**保留期限：每月計數文件最多保留約 13 個月**,逾期由排程作業自動刪除（12_4 E4）。 | asia-east1 區域 |
+| **Firebase Firestore** | 匿名 UID + 當月呼叫次數計數 | 執行每月呼叫次數限額。**保留期限：每月計數文件最多保留約 13 個月**,逾期由排程作業自動刪除。 | asia-east1 區域 |
 
 Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy) 與 [Firebase 隱私條款](https://firebase.google.com/support/privacy) 規範。若您未使用拍照辨識功能（包含 §2.3 拍照記帳與股票對帳單），上述網路請求**仍會以 Anonymous Auth + App Check 建立連線**以維持下次使用就緒；但**不會送出任何圖片**。
 
@@ -197,10 +199,6 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 | 廣告 ID（AD_ID） | 提供 Google AdMob 投放廣告與計算曝光 |
 | 相機（CAMERA） | v1.1.0 拍照辨識功能（拍攝發票或股票對帳單進行 OCR 辨識；功能可選） |
 | 應用程式內購買（com.android.vending.BILLING） | 提供 App 內訂閱（Premium 進階功能）的購買與還原 |
-
-> 12_4 E2：移除 `READ_MEDIA_IMAGES`(Android 13+) 列。`image_picker` 1.1.2+ 已
-> 改用系統內建 Photo Picker,不需此權限,Android 13+ 系統也不會再顯示「相簿
-> 存取」prompt。
 
 上表為本 App 主動宣告的權限。此外，本 App 使用的第三方 SDK（Firebase、Google Play 服務、Google AdMob 等）在建置時可能由系統自動合併少數標準框架權限（例如網路狀態 `ACCESS_NETWORK_STATE`、喚醒鎖 `WAKE_LOCK`、廣告服務 `ADSERVICES_*` 與相關系統接收器等）。這些屬框架層權限，僅用於支援上表及第二節所述之已揭露功能（股票報價、廣告投放、Firebase 連線與通知），不會用於其他目的。
 
@@ -232,7 +230,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
   - 換機時 Android 系統會以裝置間加密通道將 SQLite / SharedPreferences / App 私有檔案複製到新機。
   - 您也可以選擇**仍走 App 內「匯出 → 匯入」JSON 流程**，做為跨平台 / 跨帳號的可控替代方案。
 
-> **安全性提醒**（12_4 E5）：
+> **安全性提醒**：
 > 收方裝置在 D2D 或 Google 雲端還原完成後，App 資料仍以明文方式存於 SQLite / SharedPreferences（即 §七.1 描述的明文儲存狀態）。
 > **請先為新機設定鎖屏密碼或生物辨識後再開始轉移 / 還原**，並於完成後盡快啟用 App 內建的「App 鎖定」。本 App 開發者無法控制 Android 系統轉移與雲端還原流程中的加密強度。
 
@@ -254,7 +252,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 
 | 資料 | 路徑 | 用途 | 保留期限 |
 |------|------|------|---------|
-| 每月呼叫次數計數 | `quotas/{anonUid}` | 拍照辨識每月呼叫上限管控（防止濫用） | **最多約 13 個月**，逾期由排程作業自動刪除（12_4 E4） |
+| 每月呼叫次數計數 | `quotas/{anonUid}` | 拍照辨識每月呼叫上限管控（防止濫用） | **最多約 13 個月**，逾期由排程作業自動刪除 |
 | 訂閱憑證 | `subscriptions/{anonUid}` | 驗證 Premium 訂閱狀態、防止單一購買憑證跨多帳號共用、處理退款 | 訂閱結束後仍保留作為退款與爭議處理依據（無固定刪除期限）；您可隨時依 §5.3 申請刪除 |
 | 配額退還失敗紀錄 | `quota_refund_failures/{自動 ID}` | 拍照辨識失敗時要退還已預扣的次數，若當下退還失敗則寫入此處待自動重試（內容為匿名 UID、日期、辨識類型、方案別與錯誤訊息摘要，**不含圖片或辨識內容**） | **最多 90 天**，逾期由排程作業自動刪除；退還成功即立即刪除 |
 | 訂閱狀態稽核紀錄 | `subscription_audit/{日期}` | 每日比對本服務保存的訂閱狀態是否仍與 Google Play 一致，以便及早發現退款／撤銷後未同步的情形（內容為當日統計數字，以及少量作為人工比對用的**匿名 UID 前 8 碼片段**與原因代碼；當日檢查整體執行失敗時另記一筆失敗紀錄，含日期與錯誤訊息摘要。皆**不含購買憑證、訂單編號或方案名稱**） | **最多 180 天**，逾期由排程作業自動刪除 |
@@ -268,6 +266,7 @@ Firebase 服務受 [Google 隱私權政策](https://policies.google.com/privacy)
 - **Email**：[banana87168@gmail.com](mailto:banana87168@gmail.com)
 - **信件內容請提供**：您的 App 安裝時間與大致使用區域，協助比對
 - **處理時程**：自收件起 **30 日內**處理完成並回覆
+- **來信的保留與刪除**：您寄送至上述信箱的信件（含寄件人 Email 與信件內容）由開發者於處理完畢後保留至多 **6 個月**供爭議追溯，逾期刪除；您也可要求即時刪除。同樣的保留與刪除方式適用於您依 §2.2 送出的意見回饋表單內容。
 
 > 註：申請刪除後，您原有的 Premium 訂閱憑證對應紀錄將一併移除，未來無法以該裝置 / 匿名 UID 自動還原 Premium 狀態（仍可透過 Google Play 的「還原購買」流程重新綁定）。
 
